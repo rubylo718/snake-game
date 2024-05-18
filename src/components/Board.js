@@ -109,15 +109,8 @@ const Board = () => {
 		setFoodCell(food)
 	}
 
-	const handleKeyDown = (e) => {
-		const newDirection = DIRECTIONS[e.key] || null
-		if (!newDirection) return
-		setDirection(newDirection)
-	}
-
 	const handleGrowSnake = (newSnakeCells) => {
 		const growthNodeCoords = getGrowthNodeCoords(snake.tail, direction)
-		console.log('growthNodeCoords', growthNodeCoords)
 		if (isOutOfBounds(growthNodeCoords, board)) {
 			return
 		}
@@ -144,15 +137,19 @@ const Board = () => {
 	}
 
 	useEffect(() => {
-		document.addEventListener('keydown', (e) => {
-			handleKeyDown(e)
-		})
-		return () => {
-			document.removeEventListener('keydown', (e) => {
-				handleKeyDown(e)
-			})
+		const handleKeyDown = (e) => {
+			const newDirection = DIRECTIONS[e.key] || null
+			if (!newDirection) return
+			if (newDirection === getOppositeDirection(direction)) return
+			setDirection(newDirection)
 		}
-	}, [])
+
+		document.addEventListener('keydown', handleKeyDown)
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown)
+		}
+	}, [direction])
 
 	return (
 		<>
