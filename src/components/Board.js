@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BOARD_SIZE, DIRECTIONS } from '../constants'
 import { randomIntGenerator } from '../utils/helpers'
+import { useInterval } from '../utils/hooks'
 
 // The snake Structure
 class LinkedListNode {
@@ -150,6 +151,10 @@ const Board = () => {
 			document.removeEventListener('keydown', handleKeyDown)
 		}
 	}, [direction])
+
+	useInterval(() => {
+		handleMoveSnake()
+	}, 500)
 
 	return (
 		<>
