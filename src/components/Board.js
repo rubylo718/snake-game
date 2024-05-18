@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { BOARD_SIZE, DIRECTIONS } from '../constants'
+import { randomIntGenerator } from '../utils/helpers'
 
 // The snake Structure
 class LinkedListNode {
@@ -46,6 +47,7 @@ const Board = () => {
 	) // LinkedList
 	const [snakeCells, setSnakeCells] = useState(new Set([snake.head.value.cell])) // Set
 	const [direction, setDirection] = useState(DIRECTIONS.ArrowRight) // string
+	const [foodCell, setFoodCell] = useState(snake.head.value.cell + 5) // number
 
 	const handleMoveSnake = () => {
 		const currentHeadCoords = {
@@ -85,7 +87,21 @@ const Board = () => {
 		snake.tail = snake.tail.next
 		if (snake.tail === null) snake.tail = snake.head
 
+		// check if the snake has eaten the food
+		const isFoodEaten = newHeadCell === foodCell
+		if (isFoodEaten) {
+			generateFood(newSnakeCells)
+		}
+
 		setSnakeCells(newSnakeCells)
+	}
+
+	const generateFood = (snakeCells) => {
+		const food = randomIntGenerator(1, BOARD_SIZE ** 2)
+		if (snakeCells.has(food)) {
+			return generateFood(snakeCells)
+		}
+		setFoodCell(food)
 	}
 
 	const handleKeyDown = (e) => {
@@ -120,9 +136,9 @@ const Board = () => {
 					{row.map((cellValue, cellIdx) => (
 						<div
 							key={cellIdx}
-							className={`cell ${
-								snakeCells.has(cellValue) ? 'snake-cell' : ''
-							}`}
+							className={`cell 
+							${snakeCells.has(cellValue) ? 'snake-cell' : ''} 
+							${cellValue === foodCell ? 'food-cell' : ''}`}
 						>
 							{cellValue}
 						</div>
