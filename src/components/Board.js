@@ -47,7 +47,8 @@ const Board = () => {
 	) // LinkedList
 	const [snakeCells, setSnakeCells] = useState(new Set([snake.head.value.cell])) // Set
 	const [direction, setDirection] = useState(DIRECTIONS.ArrowRight) // string
-	const [foodCell, setFoodCell] = useState(snake.head.value.cell + 5) // number
+	const [foodCell, setFoodCell] = useState(snake.head.value.cell + 5)
+	const [score, setScore] = useState(0)
 
 	const handleMoveSnake = () => {
 		const currentHeadCoords = {
@@ -57,14 +58,14 @@ const Board = () => {
 
 		const newHeadCoords = getCoordsInDirection(currentHeadCoords, direction) // { row: 3, col: 4 }
 		if (isOutOfBounds(newHeadCoords, board)) {
-			alert('Game Over!')
+			alert(`Good Game! Your score is ${score}.`)
 			resetGame()
 			return
 		}
 
 		const newHeadCell = board[newHeadCoords?.row][newHeadCoords?.col] // 35
 		if (snakeCells.has(newHeadCell)) {
-			alert('Game Over!')
+			alert(`Good Game! Your score is ${score}.`)
 			resetGame()
 			return
 		}
@@ -91,6 +92,7 @@ const Board = () => {
 		const isFoodEaten = newHeadCell === foodCell
 		if (isFoodEaten) {
 			generateFood(newSnakeCells)
+			setScore((prevScore) => prevScore + 1)
 		}
 
 		setSnakeCells(newSnakeCells)
@@ -111,6 +113,7 @@ const Board = () => {
 	}
 
 	const resetGame = () => {
+		setScore(0)
 		const startingSnakeLLValues = getStartingSnakeLLValues(board)
 		setSnake(new LinkedList(startingSnakeLLValues))
 		setSnakeCells(new Set([startingSnakeLLValues.cell]))
@@ -129,23 +132,26 @@ const Board = () => {
 	}, [])
 
 	return (
-		<div className="board">
+		<>
+			<h2>Score: {score}</h2>
 			<button onClick={handleMoveSnake}>Move Snake</button>
-			{board.map((row, rowIdx) => (
-				<div key={rowIdx} className="row">
-					{row.map((cellValue, cellIdx) => (
-						<div
-							key={cellIdx}
-							className={`cell 
+			<div className="board">
+				{board.map((row, rowIdx) => (
+					<div key={rowIdx} className="row">
+						{row.map((cellValue, cellIdx) => (
+							<div
+								key={cellIdx}
+								className={`cell 
 							${snakeCells.has(cellValue) ? 'snake-cell' : ''} 
 							${cellValue === foodCell ? 'food-cell' : ''}`}
-						>
-							{cellValue}
-						</div>
-					))}
-				</div>
-			))}
-		</div>
+							>
+								{cellValue}
+							</div>
+						))}
+					</div>
+				))}
+			</div>
+		</>
 	)
 }
 
