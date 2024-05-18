@@ -77,7 +77,9 @@ const Board = () => {
 		})
 
 		// update the snake head node
+		const currentHead = snake.head
 		snake.head = newHead
+		currentHead.next = newHead
 
 		// update the snakeCells set
 		const newSnakeCells = new Set(snakeCells)
@@ -91,6 +93,7 @@ const Board = () => {
 		// check if the snake has eaten the food
 		const isFoodEaten = newHeadCell === foodCell
 		if (isFoodEaten) {
+			handleGrowSnake(newSnakeCells)
 			generateFood(newSnakeCells)
 			setScore((prevScore) => prevScore + 1)
 		}
@@ -112,12 +115,32 @@ const Board = () => {
 		setDirection(newDirection)
 	}
 
+	const handleGrowSnake = (newSnakeCells) => {
+		const growthNodeCoords = getGrowthNodeCoords(snake.tail, direction)
+		console.log('growthNodeCoords', growthNodeCoords)
+		if (isOutOfBounds(growthNodeCoords, board)) {
+			return
+		}
+		const growthNodeCell = board[growthNodeCoords.row][growthNodeCoords.col]
+		const newTail = new LinkedListNode({
+			row: growthNodeCoords.row,
+			col: growthNodeCoords.col,
+			cell: growthNodeCell,
+		})
+		const currentTail = snake.tail
+		snake.tail = newTail
+		snake.tail.next = currentTail
+
+		newSnakeCells.add(growthNodeCell)
+	}
+
 	const resetGame = () => {
 		setScore(0)
 		const startingSnakeLLValues = getStartingSnakeLLValues(board)
 		setSnake(new LinkedList(startingSnakeLLValues))
 		setSnakeCells(new Set([startingSnakeLLValues.cell]))
 		setDirection(DIRECTIONS.ArrowRight)
+		setFoodCell(startingSnakeLLValues.cell + 5)
 	}
 
 	useEffect(() => {
@@ -177,4 +200,45 @@ const getCoordsInDirection = (coords, direction) => {
 	}
 }
 
+// get the direction of the next node
+const getNextNodeDirection = (node, currentDirection) => {
+	if (node.next === null) return currentDirection
+	const { row: currentRow, col: currentCol } = node.value
+	const { row: nextRow, col: nextCol } = node.next.value
+	if (currentRow === nextRow) {
+		return currentCol < nextCol ? DIRECTIONS.ArrowRight : DIRECTIONS.ArrowLeft
+	} else {
+		return currentRow < nextRow ? DIRECTIONS.ArrowDown : DIRECTIONS.ArrowUp
+	}
+}
+
+// get the growth node coordinates
+const getGrowthNodeCoords = (tail, currentDirection) => {
+	const tailNextNodeDirection = getNextNodeDirection(tail, currentDirection)
+	const growthDirection = getOppositeDirection(tailNextNodeDirection)
+	const growthNodeCoords = getCoordsInDirection(
+		{
+			row: tail.value.row,
+			col: tail.value.col,
+		},
+		growthDirection
+	)
+	return growthNodeCoords
+}
+
+// get the opposite direction
+const getOppositeDirection = (direction) => {
+	switch (direction) {
+		case DIRECTIONS.ArrowUp:
+			return DIRECTIONS.ArrowDown
+		case DIRECTIONS.ArrowDown:
+			return DIRECTIONS.ArrowUp
+		case DIRECTIONS.ArrowLeft:
+			return DIRECTIONS.ArrowRight
+		case DIRECTIONS.ArrowRight:
+			return DIRECTIONS.ArrowLeft
+		default:
+			return direction
+	}
+}
 export default Board
