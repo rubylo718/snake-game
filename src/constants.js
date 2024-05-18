@@ -6,3 +6,5 @@ export const DIRECTIONS = {
 	ArrowLeft: 'left',
 	ArrowRight: 'right',
 }
+
+export const INTERVAL_DELAY = 350

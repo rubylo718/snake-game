@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BOARD_SIZE, DIRECTIONS } from '../constants'
+import { BOARD_SIZE, DIRECTIONS, INTERVAL_DELAY } from '../constants'
 import { randomIntGenerator } from '../utils/helpers'
 import { useInterval } from '../utils/hooks'
 
@@ -37,7 +37,7 @@ const getStartingSnakeLLValues = (board) => {
 	return {
 		row: 3,
 		col: 3,
-		cell: startingCell, // 34
+		cell: startingCell,
 	}
 }
 
@@ -57,16 +57,16 @@ const Board = () => {
 			col: snake.head.value.col,
 		}
 
-		const newHeadCoords = getCoordsInDirection(currentHeadCoords, direction) // { row: 3, col: 4 }
+		const newHeadCoords = getCoordsInDirection(currentHeadCoords, direction)
 		if (isOutOfBounds(newHeadCoords, board)) {
-			alert(`Good Game! Your score is ${score}.`)
+			alert(`Good Game! Your score is ${score}. Click OK to play again.`)
 			resetGame()
 			return
 		}
 
-		const newHeadCell = board[newHeadCoords?.row][newHeadCoords?.col] // 35
+		const newHeadCell = board[newHeadCoords?.row][newHeadCoords?.col]
 		if (snakeCells.has(newHeadCell)) {
-			alert(`Good Game! Your score is ${score}.`)
+			alert(`Good Game! Your score is ${score}. Click OK to play again.`)
 			resetGame()
 			return
 		}
@@ -154,12 +154,11 @@ const Board = () => {
 
 	useInterval(() => {
 		handleMoveSnake()
-	}, 500)
+	}, INTERVAL_DELAY)
 
 	return (
 		<>
 			<h2>Score: {score}</h2>
-			<button onClick={handleMoveSnake}>Move Snake</button>
 			<div className="board">
 				{board.map((row, rowIdx) => (
 					<div key={rowIdx} className="row">
@@ -169,9 +168,7 @@ const Board = () => {
 								className={`cell 
 							${snakeCells.has(cellValue) ? 'snake-cell' : ''} 
 							${cellValue === foodCell ? 'food-cell' : ''}`}
-							>
-								{cellValue}
-							</div>
+							></div>
 						))}
 					</div>
 				))}
