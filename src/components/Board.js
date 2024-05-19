@@ -119,6 +119,16 @@ const Board = () => {
 	}
 
 	const generateFood = (snakeCells) => {
+		// handle the extreme case: when the snake has filled the entire board
+		const emptyCells = board.flat().filter((cell) => !snakeCells.has(cell))
+		if (emptyCells.length === 0) {
+			alert(
+				`You won! No empty cells left on the board. Your score is ${score}. Click OK to play again.`
+			)
+			resetGame()
+			return
+		}
+		
 		const food = randomIntGenerator(1, BOARD_SIZE ** 2)
 		if (snakeCells.has(food)) {
 			return generateFood(snakeCells)
