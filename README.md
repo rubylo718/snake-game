@@ -33,7 +33,7 @@ https://rubylo718.github.io/snake-game/
 
 - `useEffect` and event - [React.dev - Subscribing to events](https://react.dev/learn/synchronizing-with-effects#subscribing-to-events)
 - Custom hook `useInterval` - [Making setInterval Declarative with React Hooks](https://overreacted.io/making-setinterval-declarative-with-react-hooks/)
-- Project planning - [Clément Mihailescu](https://github.com/clementmihailescu/Snake-Game-Reverse-LL-Tutorial)
+- Project todos planning - [Youtube - Clément Mihailescu](https://www.youtube.com/watch?v=7Rkib_fvowE&t=319s)
 - Cooperated with Github Copilot
 
 ## 作者
